@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Closet da Manu 💕</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="toast"></div>
+
+<header>
+  <div class="badge">✨ Seu estilo, suas regras</div>
+  <h1>Closet da <span>Manu</span> 💕</h1>
+  <p>Organize seu guarda-roupa e monte looks incríveis</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="abrirTab('cadastrar', event)">➕ Cadastrar</button>
+  <button class="tab-btn" onclick="abrirTab('armario', event)" id="tab-armario">👗 Armário</button>
+  <button class="tab-btn" onclick="abrirTab('look', event)">✨ Gerar Look</button>
+</div>
+
+<!-- CADASTRAR -->
+<div class="section active" id="sec-cadastrar">
+  <div class="glass-card">
+    <div class="section-title">Nova peça 🛍️</div>
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Nome da peça</label>
+        <input id="nome" placeholder="ex: Blusa de laço rosa">
+      </div>
+
+      <div class="form-group">
+        <label>Cor</label>
+        <input id="cor" placeholder="ex: Rosa, Preto, Bege...">
+      </div>
+
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="tipo">
+          <option value="cima">👚 Parte de cima</option>
+          <option value="baixo">👖 Parte de baixo</option>
+          <option value="inteiro">👗 Inteiro / Vestido</option>
+          <option value="sapato">👠 Sapato / Bolsa</option>
+          <option value="acessorio">💍 Acessório</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Estilo</label>
+        <select id="estilo">
+          <option value="casual">☀️ Casual</option>
+          <option value="encontro">💕 Encontro</option>
+          <option value="trabalho">💼 Trabalho</option>
+          <option value="festa">🎉 Festa</option>
+          <option value="esporte">🏃 Esporte</option>
+        </select>
+      </div>
+
+      <div class="form-group full">
+        <label>Foto da peça</label>
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="imagem" accept="image/*" onchange="previewImagem(event)">
+          <div id="upload-content">
+            <div class="upload-icon">📷</div>
+            <p>Clique para escolher uma foto</p>
+          </div>
+          <img id="img-preview" class="preview-img">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="salvarRoupa()">💾 Salvar Peça</button>
+      <button class="btn btn-secondary" onclick="limparFormulario()">🗑️ Limpar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ARMÁRIO -->
+<div class="section" id="sec-armario">
+  <div class="glass-card">
+    <div class="section-title">Meu Armário 👗</div>
+
+    <div id="stats-area" class="stats-grid"></div>
+
+    <div class="filter-bar" id="filtros">
+      <button class="filter-chip active" onclick="filtrarRoupas('todos', this)">Tudo</button>
+      <button class="filter-chip" onclick="filtrarRoupas('cima', this)">Tops</button>
+      <button class="filter-chip" onclick="filtrarRoupas('baixo', this)">Bottoms</button>
+      <button class="filter-chip" onclick="filtrarRoupas('inteiro', this)">Vestidos</button>
+      <button class="filter-chip" onclick="filtrarRoupas('sapato', this)">Calçados</button>
+      <button class="filter-chip" onclick="filtrarRoupas('acessorio', this)">Acessórios</button>
+    </div>
+
+    <div class="roupas-grid" id="roupas-grid"></div>
+  </div>
+</div>
+
+<!-- GERAR LOOK -->
+<div class="section" id="sec-look">
+  <div class="glass-card">
+    <div class="section-title">Gerar Look ✨</div>
+
+    <!-- Configuração da chave de API -->
+    <div class="api-config" id="api-config">
+      <div class="api-config-header" onclick="toggleApiConfig()">
+        <span>🤖 Configurar análise com IA</span>
+        <span id="api-status-badge" class="api-badge api-badge--off">Desativada</span>
+        <span class="api-arrow" id="api-arrow">▼</span>
+      </div>
+      <div class="api-config-body" id="api-config-body">
+        <p class="api-hint">Cole sua chave da API do Claude (<a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>) para ativar a análise inteligente do look com visão das fotos.</p>
+        <div class="api-input-row">
+          <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off">
+          <button class="btn btn-primary" onclick="salvarApiKey()" style="padding:10px 20px">Salvar 🔑</button>
+        </div>
+        <p class="api-key-info" id="api-key-info"></p>
+      </div>
+    </div>
+
+    <div class="look-options">
+      <div class="form-group">
+        <label>Ocasião</label>
+        <select id="ocasiao">
+          <option value="casual">☀️ Casual</option>
+          <option value="encontro">💕 Encontro</option>
+          <option value="trabalho">💼 Trabalho</option>
+          <option value="festa">🎉 Festa</option>
+          <option value="esporte">🏃 Esporte</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="gerarLook()">✨ Sortear Look</button>
+      <button class="btn btn-secondary" id="btn-salvar-look" onclick="salvarLookFavorito()" style="display:none">💾 Salvar Favorito</button>
+    </div>
+
+    <div class="look-resultado" id="resultado"></div>
+
+    <!-- Análise da IA -->
+    <div id="ia-analise-box" style="display:none">
+      <div class="ia-divider">
+        <span>✨ Análise da IA</span>
+      </div>
+      <div id="ia-analise-content" class="ia-analise-content"></div>
+      <button class="btn btn-primary" id="btn-analisar" onclick="analisarLookComIA()" style="margin-top:16px">
+        🤖 Analisar esse look com IA
+      </button>
+    </div>
+  </div>
+
+  <!-- Looks favoritos -->
+  <div class="glass-card" style="margin-top:20px" id="favoritos-section">
+    <div class="section-title">Looks Favoritos 💖</div>
+    <div id="favoritos-lista"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
